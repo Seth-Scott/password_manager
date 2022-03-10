@@ -2,6 +2,13 @@ from tkinter import *
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
+def add_password():
+    site = website_entry.get()
+    email = email_usr_entry.get()
+    password = password_entry.get()
+    passwords = {site: email}
+    with open("passwords.txt", mode="a") as file:
+        file.write(f"{site} | {email} | {password}\n")
 
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
@@ -18,14 +25,26 @@ website_label = Label(text="Website:")
 website_label.grid(row=4, column=2)
 
 website_entry = Entry(width=35)
-website_entry.grid(row=4, column=3)
+website_entry.grid(row=4, column=3, columnspan=2)
+website_entry.focus()
 
 email_usr_label = Label(text="Email/Username:")
 email_usr_label.grid(row=5, column=2)
 
 email_usr_entry = Entry(width=35)
-email_usr_entry.grid(row=5, column=3)
+email_usr_entry.grid(row=5, column=3, columnspan=2)
+email_usr_entry.insert(0, "user@gmail.com")
 
+password_label = Label(text="Password:")
+password_label.grid(row=6, column=2)
 
+password_entry = Entry(width=21)
+password_entry.grid(row=6, column=3, columnspan=2, sticky="W")
+
+generate_button = Button(text="Generate")
+generate_button.grid(row=6, column=4)
+
+add_button = Button(text="Add", width=32, command=add_password)
+add_button.grid(row=7, column=3, columnspan=5)
 
 window.mainloop()
