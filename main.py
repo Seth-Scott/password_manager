@@ -1,13 +1,15 @@
 from tkinter import *
 from tkinter import messagebox
-from random import choice, shuffle, randint
+from random import choice, randint
 import pyperclip
+import json
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
+
+
 def generate_password():
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
-
 
     letter_list = [choice(letters) for _ in range(randint(8, 10))]
     symbol_list = [choice(symbols) for _ in range(randint(2, 4))]
@@ -26,21 +28,34 @@ def add_password():
     site = website_entry.get()
     email = email_usr_entry.get()
     password = password_entry.get()
+    new_data = {
+        site: {
+            "email": email,
+            "password": password
+        }
+                }
 
-    is_ok = messagebox.askokcancel(title=site, message=f"These are the details entered:\nEmail: {email}\n"
-                                               f" Password: {password}\n Okay to save?")
+    if len(password) == 0 or len(password) == 0:
+        messagebox.showinfo(title="ERROR", message="You cannot leave the email or password fields blank!")
 
-    if is_ok:
-        if len(password) == 0 or len(password) == 0:
-            messagebox.showinfo(title="ERROR", message="You cannot leave the email or password fields blank!")
-
+    else:
+        try:
+            with open("data.json", mode="r") as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            with open("data.json", mode="w") as file:
+                json.dump(new_data, file, indent=4)
         else:
-            with open("passwords.txt", mode="a") as file:
-                file.write(f"{site} | {email} | {password}\n")
-                website_entry.delete(0, END)
-                password_entry.delete(0, END)
+            data.update(new_data)
+            with open("data.json", mode="w") as file:
+                json.dump(data, file, indent=4)
+        finally:
+            website_entry.delete(0, END)
+            password_entry.delete(0, END)
 
 # ---------------------------- UI SETUP ------------------------------- #
+
+
 window = Tk()
 window.title("MyPass Password Manager")
 window.config(padx=20, pady=20)
